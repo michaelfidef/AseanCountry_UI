@@ -7,4 +7,10 @@ class Repository {
     fun getCountry(): List<Country> {
         return CountriesData.countries
     }
+
+    fun searchCountry(query: String): List<Country>{
+        return CountriesData.countries.filter {
+            it.name.contains(query, ignoreCase = true)
+        }
+    }
 }

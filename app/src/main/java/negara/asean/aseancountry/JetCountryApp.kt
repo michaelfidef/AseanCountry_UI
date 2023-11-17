@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,8 +23,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -56,12 +62,21 @@ fun JetCountryApp(
         val showButton: Boolean by remember {
             derivedStateOf { listState.firstVisibleItemIndex > 0 }
         }
-        val sortedCountry by viewModel.sortedHeroes.collectAsState()
+        val sortedCountry by viewModel.sortedCountry.collectAsState()
+        val query by viewModel.query
 
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(bottom = 80.dp)
+            contentPadding = PaddingValues(bottom = 80.dp),
         ) {
+            item {
+                SearchBar(
+                    query = query,
+                    onQueryChange = viewModel::search,
+                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                )
+            }
+
             items(sortedCountry) {sort ->
                 CountryItem(country = sort )
             }
@@ -89,8 +104,6 @@ fun JetCountryApp(
 fun CountryItem(country: Country) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
             .border(1.dp, Color.Black, shape = RectangleShape)
             .clickable {},
         verticalAlignment = Alignment.CenterVertically,
@@ -99,7 +112,7 @@ fun CountryItem(country: Country) {
             painter = painterResource(id = country.photo),
             contentDescription = "Flag of ${country.name}",
             modifier = Modifier
-                .size(64.dp)
+                .size(80.dp)
                 .border(1.dp, Color.Black, shape = RectangleShape)
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -111,6 +124,38 @@ fun CountryItem(country: Country) {
                 .padding(end = 16.dp)
                 .align(Alignment.CenterVertically)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SearchBar(
+        query = query,
+        onQueryChange = onQueryChange,
+        onSearch = {},
+        active = false,
+        onActiveChange = {},
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        placeholder = {
+            Text(stringResource(R.string.search_hero))
+        },
+        shape = MaterialTheme.shapes.large,
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+    ) {
     }
 }
 

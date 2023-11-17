@@ -1,5 +1,7 @@
 package negara.asean.aseancountry
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +13,16 @@ class JetCountryViewModel(private val repository: Repository) : ViewModel() {
         repository.getCountry()
             .sortedBy { it.name }
     )
-    val sortedHeroes: MutableStateFlow<List<Country>> get() = _sortedCountry
+    val sortedCountry: MutableStateFlow<List<Country>> get() = _sortedCountry
+
+    private val _query = mutableStateOf("")
+    val query: State<String> get() = _query
+
+    fun search(newQuery : String){
+        _query.value = newQuery
+        _sortedCountry.value = repository.searchCountry(_query.value)
+            .sortedBy { it.name }
+    }
 }
 
 class ViewModelFactory(private val repository: Repository) :

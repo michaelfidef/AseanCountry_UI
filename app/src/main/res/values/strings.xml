@@ -2,4 +2,6 @@
     <string name="app_name">Asean Country</string>
     <string name="scroll_to_top">Scroll to Top</string>
     <string name="search_hero">Search Country</string>
+    <string name="menu_home">Country</string>
+    <string name="menu_profile">Profile</string>
 </resources>

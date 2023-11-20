@@ -5,67 +5,67 @@ import negara.asean.aseancountry.R
 object CountriesData {
     val countries = listOf(
         Country(
-            "1",
+            1,
             "Kamboja",
             R.drawable.kamboja,
             "Phnom Penh"
         ),
         Country(
-            "2",
+            2,
             "Brunei Darussalam",
             R.drawable.brunei,
             "Bandar Seri Begawan"
         ),
         Country(
-            "3",
+            3,
             "Indonesia",
             R.drawable.indonesia,
             "Jakarta"
         ),
         Country(
-            "4",
+            4,
             "Laos",
             R.drawable.laos,
             "Vientiane"
         ),
         Country(
-            "5",
+            5,
             "Malaysia",
             R.drawable.malaysia,
             "Kuala Lumpur"
         ),
         Country(
-            "6",
+            6,
             "Myanmar",
             R.drawable.myanmar,
             "Naypyidaw"
         ),
         Country(
-            "7",
+            7,
             "Philippines",
             R.drawable.philippines,
             "Manila"
         ),
         Country(
-            "8",
+            8,
             "Singapore",
             R.drawable.singapore,
             "Singapura"
         ),
         Country(
-            "9",
+            9,
             "Thailand",
             R.drawable.thailand,
             "Bangkok"
         ),
         Country(
-            "10",
+            10,
             "Timor Leste",
             R.drawable.timorleste,
             "Dili"
         ),
         Country(
-            "11",
+            11,
             "Vietnam",
             R.drawable.vietnam,
             "Hanoi"

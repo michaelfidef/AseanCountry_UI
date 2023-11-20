@@ -60,7 +60,7 @@ fun Home(
     viewModel: HomeViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
-//    navigateToDetail: (Long) -> Unit,
+    navigateToDetail: (Long) -> Unit,
 ) {
     viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
@@ -69,15 +69,12 @@ fun Home(
             }
 
             is UiState.Success -> {
-                val countries = (uiState as UiState.Success<List<Country>>).data
-                val query by remember { mutableStateOf("") }
-
                 HomeContent(
                     country = uiState.data,
                     query = viewModel.query.value,
                     onQueryChange = viewModel::search,
                     modifier = modifier,
-//                    navigateToDetail = navigateToDetail
+                    navigateToDetail = navigateToDetail
                 )
             }
 
@@ -93,6 +90,7 @@ fun HomeContent(
     country: List<Country>,
     query: String,
     onQueryChange: (String) -> Unit,
+    navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -117,9 +115,11 @@ fun HomeContent(
 
             items(country, key = { it.id }) { hero ->
                 CountryItem(
-                    country = hero
+                    country = hero,
+                    navigateToDetail = navigateToDetail
                 )
             }
+
         }
         AnimatedVisibility(
             visible = showButton,
@@ -190,11 +190,15 @@ fun SearchBar(
 
 @Composable
 fun CountryItem(
-    country: Country) {
+    country: Country,
+    navigateToDetail: (Long) -> Unit,
+    ) {
     Row(
         modifier = Modifier
             .border(1.dp, Color.Black, shape = RectangleShape)
-            .clickable {},
+            .clickable {
+                navigateToDetail(country.id)
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

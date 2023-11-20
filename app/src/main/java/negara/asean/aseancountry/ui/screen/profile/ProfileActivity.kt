@@ -1,4 +1,4 @@
-package negara.asean.aseancountry
+package negara.asean.aseancountry.ui.screen.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,10 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import negara.asean.aseancountry.R
 
 @Composable
 fun ProfileActivity(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),

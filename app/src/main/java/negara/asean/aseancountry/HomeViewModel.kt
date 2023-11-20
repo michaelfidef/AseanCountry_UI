@@ -4,24 +4,47 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import negara.asean.aseancountry.data.Repository
 import negara.asean.aseancountry.model.Country
+import negara.asean.aseancountry.ui.common.UiState
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
-    private val _sortedCountry = MutableStateFlow(
-        repository.getCountry()
-            .sortedBy { it.name }
-    )
-    val sortedCountry: MutableStateFlow<List<Country>> get() = _sortedCountry
+    private val _uiState: MutableStateFlow<UiState<List<Country>>> =
+        MutableStateFlow(UiState.Loading)
+    val uiState: StateFlow<UiState<List<Country>>>
+        get() = _uiState
+
+    fun getCountries() {
+        viewModelScope.launch {
+            repository.getCountry()
+                .catch {
+                    _uiState.value = UiState.Error(it.message.toString())
+                }
+                .collect { orderRewards ->
+                    _uiState.value = UiState.Success(orderRewards)
+                }
+        }
+    }
 
     private val _query = mutableStateOf("")
     val query: State<String> get() = _query
 
-    fun search(newQuery : String){
-        _query.value = newQuery
-        _sortedCountry.value = repository.searchCountry(_query.value)
-            .sortedBy { it.name }
+    fun search(newQuery: String) {
+        viewModelScope.launch {
+            _query.value = newQuery
+            repository.searchCountry(newQuery)
+                .catch { error ->
+                    _uiState.value = UiState.Error(error.message.toString())
+                }
+                .collect { countyList ->
+                    _uiState.value = UiState.Success(countyList)
+                }
+        }
     }
 }
 

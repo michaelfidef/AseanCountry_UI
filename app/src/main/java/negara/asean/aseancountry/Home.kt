@@ -1,6 +1,7 @@
 package negara.asean.aseancountry
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -31,15 +31,14 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,28 +47,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
-import negara.asean.aseancountry.model.CountriesData
+import negara.asean.aseancountry.di.Injection
 import negara.asean.aseancountry.model.Country
+import negara.asean.aseancountry.ui.common.UiState
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Home(
     modifier: Modifier,
+    viewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory(Injection.provideRepository())
+    ),
 //    navigateToDetail: (Long) -> Unit,
 ) {
-    val countries = CountriesData.countries
-    var query by remember { mutableStateOf("") }
+    viewModel.uiState.collectAsState(initial = UiState.Loading).value.let { uiState ->
+        when (uiState) {
+            is UiState.Loading -> {
+                viewModel.getCountries()
+            }
 
-    Surface(modifier = modifier.fillMaxSize()) {
-        HomeContent(
-            country = countries,
-            query = query,
-            onQueryChange = { newQuery ->
-                query = newQuery
-            },
-//            navigateToDetail = navigateToDetail
-        )
+            is UiState.Success -> {
+                val countries = (uiState as UiState.Success<List<Country>>).data
+                val query by remember { mutableStateOf("") }
+
+                HomeContent(
+                    country = uiState.data,
+                    query = viewModel.query.value,
+                    onQueryChange = viewModel::search,
+                    modifier = modifier,
+//                    navigateToDetail = navigateToDetail
+                )
+            }
+
+            is UiState.Error -> {
+                Log.e("HomeScreen", "Error: ${uiState.errorMessage}")
+            }
+        }
     }
 }
 
@@ -86,26 +101,6 @@ fun HomeContent(
         val showButton: Boolean by remember {
             derivedStateOf { listState.firstVisibleItemIndex > 0 }
         }
-
-//        val _sortedCountry = MutableStateFlow(
-//            CountriesData.countries
-//                .sortedBy { it.name }
-//        )
-//        val sortedCountry: MutableStateFlow<List<Country>> = _sortedCountry
-
-//        val _query = mutableStateOf("")
-//        val query: String = _query.value
-
-//        val search: (String) -> Unit = { newQuery ->
-//            _query.value = newQuery
-//            _sortedCountry.value = searchCountry(_query.value)
-//                .sortedBy { it.name }
-//        }
-
-//        var searchText by remember {
-//            mutableStateOf("")
-//        }
-
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 80.dp),
@@ -117,11 +112,10 @@ fun HomeContent(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
                         .padding(vertical = 4.dp, horizontal = 8.dp)
-
                 )
             }
 
-            items(CountriesData.countries, key = { it.id }) { hero ->
+            items(country, key = { it.id }) { hero ->
                 CountryItem(
                     country = hero
                 )
@@ -147,17 +141,6 @@ fun HomeContent(
 }
 
 @Composable
-fun searchCountry(query: String): List<Country> {
-    return CountriesData.countries.filter {
-        it.name.contains(query, ignoreCase = true)
-    }
-}
-
-@Composable
-fun HomeContent() {
-}
-
-@Composable
 fun ScrollToTopButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -180,9 +163,6 @@ fun SearchBar(
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-//    var active by remember {
-//        mutableStateOf(false)
-//    }
     SearchBar(
         query = query,
         onQueryChange = onQueryChange,
@@ -209,7 +189,8 @@ fun SearchBar(
 }
 
 @Composable
-fun CountryItem(country: Country) {
+fun CountryItem(
+    country: Country) {
     Row(
         modifier = Modifier
             .border(1.dp, Color.Black, shape = RectangleShape)

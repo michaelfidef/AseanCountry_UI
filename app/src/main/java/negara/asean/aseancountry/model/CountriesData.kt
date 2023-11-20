@@ -7,57 +7,68 @@ object CountriesData {
         Country(
             "1",
             "Kamboja",
-            R.drawable.kamboja
+            R.drawable.kamboja,
+            "Phnom Penh"
         ),
         Country(
             "2",
             "Brunei Darussalam",
-            R.drawable.brunei
+            R.drawable.brunei,
+            "Bandar Seri Begawan"
         ),
         Country(
             "3",
             "Indonesia",
-            R.drawable.indonesia
+            R.drawable.indonesia,
+            "Jakarta"
         ),
         Country(
             "4",
             "Laos",
-            R.drawable.laos
+            R.drawable.laos,
+            "Vientiane"
         ),
         Country(
             "5",
             "Malaysia",
-            R.drawable.malaysia
+            R.drawable.malaysia,
+            "Kuala Lumpur"
         ),
         Country(
             "6",
             "Myanmar",
-            R.drawable.myanmar
+            R.drawable.myanmar,
+            "Naypyidaw"
         ),
         Country(
             "7",
             "Philippines",
-            R.drawable.philippines
+            R.drawable.philippines,
+            "Manila"
         ),
         Country(
             "8",
             "Singapore",
-            R.drawable.singapore
+            R.drawable.singapore,
+            "Singapura"
         ),
         Country(
             "9",
             "Thailand",
-            R.drawable.thailand
+            R.drawable.thailand,
+            "Bangkok"
         ),
         Country(
             "10",
             "Timor Leste",
-            R.drawable.timorleste
+            R.drawable.timorleste,
+            "Dili"
         ),
         Country(
             "11",
             "Vietnam",
-            R.drawable.vietnam
+            R.drawable.vietnam,
+            "Hanoi"
         )
     )
 }

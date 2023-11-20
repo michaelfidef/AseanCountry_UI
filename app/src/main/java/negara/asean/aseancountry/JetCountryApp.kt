@@ -28,7 +28,6 @@ import negara.asean.aseancountry.ui.theme.AseanCountryTheme
 fun JetCountryApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-//    viewModel: HomeViewModel = viewModel(factory = ViewModelFactory(Injection.provideRepository()))
 ) {
     Scaffold(
         bottomBar = {

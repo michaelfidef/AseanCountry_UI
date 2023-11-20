@@ -1,17 +1,20 @@
 package negara.asean.aseancountry.data
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import negara.asean.aseancountry.model.CountriesData
+import negara.asean.aseancountry.model.CountriesData.countries
 import negara.asean.aseancountry.model.Country
 
 class Repository {
-    fun getCountry(): List<Country> {
-        return CountriesData.countries
+    fun getCountry(): Flow<List<Country>> {
+        return flowOf(countries)
     }
 
-    fun searchCountry(query: String): List<Country>{
-        return CountriesData.countries.filter {
+    fun searchCountry(query: String): Flow<List<Country>> {
+        return flowOf(CountriesData.countries.filter{
             it.name.contains(query, ignoreCase = true)
-        }
+        })
     }
 
     companion object {

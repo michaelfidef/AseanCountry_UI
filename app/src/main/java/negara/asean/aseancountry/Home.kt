@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -50,12 +52,33 @@ import kotlinx.coroutines.launch
 import negara.asean.aseancountry.model.CountriesData
 import negara.asean.aseancountry.model.Country
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Home(
     modifier: Modifier,
 //    navigateToDetail: (Long) -> Unit,
+) {
+    val countries = CountriesData.countries
+    var query by remember { mutableStateOf("") }
+
+    Surface(modifier = modifier.fillMaxSize()) {
+        HomeContent(
+            country = countries,
+            query = query,
+            onQueryChange = { newQuery ->
+                query = newQuery
+            },
+//            navigateToDetail = navigateToDetail
+        )
+    }
+}
+
+@Composable
+fun HomeContent(
+    country: List<Country>,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         val scope = rememberCoroutineScope()
@@ -79,9 +102,9 @@ fun Home(
 //                .sortedBy { it.name }
 //        }
 
-        var searchText by remember {
-            mutableStateOf("")
-        }
+//        var searchText by remember {
+//            mutableStateOf("")
+//        }
 
         LazyColumn(
             state = listState,
@@ -89,11 +112,12 @@ fun Home(
         ) {
             item {
                 SearchBar(
-                    query = searchText,
-                    onQueryChange = {newQuery ->
-                        searchText = newQuery
-                    },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                    query = query,
+                    onQueryChange = onQueryChange,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+
                 )
             }
 
@@ -130,7 +154,8 @@ fun searchCountry(query: String): List<Country> {
 }
 
 @Composable
-fun HomeContent(){}
+fun HomeContent() {
+}
 
 @Composable
 fun ScrollToTopButton(
@@ -155,15 +180,15 @@ fun SearchBar(
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var active by remember {
-        mutableStateOf(false)
-    }
+//    var active by remember {
+//        mutableStateOf(false)
+//    }
     SearchBar(
         query = query,
         onQueryChange = onQueryChange,
-        onSearch = {active = false},
-        active = active,
-        onActiveChange = {active = it},
+        onSearch = {},
+        active = false,
+        onActiveChange = {},
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,

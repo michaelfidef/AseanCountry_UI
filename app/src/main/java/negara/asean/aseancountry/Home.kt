@@ -1,11 +1,13 @@
 package negara.asean.aseancountry
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,16 +46,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import negara.asean.aseancountry.model.CountriesData
 import negara.asean.aseancountry.model.Country
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun Home(
     modifier: Modifier,
-//    viewModel: HomeViewModel = viewModel(factory = ViewModelFactory(Injection.provideRepository()))
-){
+//    navigateToDetail: (Long) -> Unit,
+) {
     Box(modifier = modifier) {
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
@@ -59,30 +64,39 @@ fun Home(
             derivedStateOf { listState.firstVisibleItemIndex > 0 }
         }
 
-        val _sortedCountry = MutableStateFlow(
-            CountriesData.countries
-                .sortedBy { it.name }
-        )
-        val sortedCountry: MutableStateFlow<List<Country>> = _sortedCountry
+//        val _sortedCountry = MutableStateFlow(
+//            CountriesData.countries
+//                .sortedBy { it.name }
+//        )
+//        val sortedCountry: MutableStateFlow<List<Country>> = _sortedCountry
 
-//        val sortedCountry by viewModel.sortedCountry.collectAsState()
-//        val query by viewModel.query
+//        val _query = mutableStateOf("")
+//        val query: String = _query.value
+
+//        val search: (String) -> Unit = { newQuery ->
+//            _query.value = newQuery
+//            _sortedCountry.value = searchCountry(_query.value)
+//                .sortedBy { it.name }
+//        }
+
+        var searchText by remember {
+            mutableStateOf("")
+        }
 
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 80.dp),
         ) {
-//            item {
-//                SearchBar(
-//                    query = query,
-//                    onQueryChange = viewModel::search,
-//                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-//                )
-//            }
+            item {
+                SearchBar(
+                    query = searchText,
+                    onQueryChange = {newQuery ->
+                        searchText = newQuery
+                    },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                )
+            }
 
-//            items(sortedCountry) { sort ->
-//                CountryItem(country = sort)
-//            }
             items(CountriesData.countries, key = { it.id }) { hero ->
                 CountryItem(
                     country = hero
@@ -109,6 +123,16 @@ fun Home(
 }
 
 @Composable
+fun searchCountry(query: String): List<Country> {
+    return CountriesData.countries.filter {
+        it.name.contains(query, ignoreCase = true)
+    }
+}
+
+@Composable
+fun HomeContent(){}
+
+@Composable
 fun ScrollToTopButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -131,12 +155,15 @@ fun SearchBar(
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var active by remember {
+        mutableStateOf(false)
+    }
     SearchBar(
         query = query,
         onQueryChange = onQueryChange,
-        onSearch = {},
-        active = false,
-        onActiveChange = {},
+        onSearch = {active = false},
+        active = active,
+        onActiveChange = {active = it},
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -145,7 +172,7 @@ fun SearchBar(
             )
         },
         placeholder = {
-            Text(stringResource(R.string.search_hero))
+            Text(stringResource(R.string.search_country))
         },
         shape = MaterialTheme.shapes.large,
         modifier = modifier

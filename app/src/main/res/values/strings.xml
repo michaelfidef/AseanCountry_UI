@@ -6,4 +6,6 @@
     <string name="menu_profile">Profile</string>
     <string name="nama_user">Michael Fidef Natalino</string>
     <string name="email_user">Michael.fidef@ti.ukdw.ac.id</string>
+    <string name="description">Deskripsi : </string>
+    <string name="back">Back</string>
 </resources>

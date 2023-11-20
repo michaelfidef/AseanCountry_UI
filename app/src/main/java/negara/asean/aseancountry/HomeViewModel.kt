@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import negara.asean.aseancountry.data.Repository
 import negara.asean.aseancountry.model.Country
 import negara.asean.aseancountry.ui.common.UiState
+import negara.asean.aseancountry.ui.screen.detail.DetailViewModel
 
 class HomeViewModel(private val repository: Repository) : ViewModel() {
     private val _uiState: MutableStateFlow<UiState<List<Country>>> =
@@ -54,6 +55,8 @@ class ViewModelFactory(private val repository: Repository) :
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
+            return DetailViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

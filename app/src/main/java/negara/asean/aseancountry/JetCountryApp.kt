@@ -68,10 +68,10 @@ fun JetCountryApp(
                 val id = it.arguments?.getLong("id") ?: -1L
                 Log.d("MyCountry", "ID $id")
                 DetailActivity(
-//                    id = id,
-//                    navigateBack ={
-//                        navController.navigateUp()
-//                    },
+                    id = id,
+                    navigateBack = {
+                        navController.navigateUp()
+                    },
                 )
             }
         }

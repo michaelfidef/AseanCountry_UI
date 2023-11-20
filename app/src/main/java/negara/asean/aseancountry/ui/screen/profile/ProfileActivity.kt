@@ -30,7 +30,8 @@ fun ProfileActivity(
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = Color.White) {
+        color = Color.White
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.Center,

@@ -12,9 +12,15 @@ class Repository {
     }
 
     fun searchCountry(query: String): Flow<List<Country>> {
-        return flowOf(CountriesData.countries.filter{
+        return flowOf(CountriesData.countries.filter {
             it.name.contains(query, ignoreCase = true)
         })
+    }
+
+    fun getCountrybyId(id: Long): Country {
+        return countries.first {
+            it.id == id
+        }
     }
 
     companion object {
